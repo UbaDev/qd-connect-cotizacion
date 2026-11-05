@@ -2,157 +2,124 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<style>*,*::before,*::after{box-sizing:border-box}body{margin:0}[hidden]{display:none!important}</style>
 <title>QD Connect · Requerimientos</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@500&display=swap">
 <style>
-/* Layout: raíz arriba, se divide en dos ramas (Web | App) que bajan como árboles verticales; abajo, lo que queda fuera de alcance. */
+/* Layout: lienzo infinito. Raíz arriba → 3 ramas (Web, App, Fuera de alcance) → módulos en fila → requisitos en columna bajo cada módulo. */
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
 :root {
-  --bg: #F4F7F8; --surface: #FFFFFF; --ink: #13222C; --muted: #586974; --line: #C3CFD6;
-  --web: #0C7A72; --web-soft: #E0F1EF; --app: #B1501C; --app-soft: #F8E9DD; --out: #7C8791; --out-soft: #ECEFF1;
+  --bg: #EEF3F4; --dot: #C9D6DB; --surface: #FFFFFF; --ink: #13222C; --muted: #586974; --line: #C3CFD6; --shadow: rgba(19,34,44,.08);
+  --web: #0C7A72; --web-soft: #DDF0EE; --app: #B1501C; --app-soft: #F7E6D9; --out: #6F7B86; --out-soft: #E6EAED;
   --f-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
   --f-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
   --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #0E161B; --surface: #15212A; --ink: #E2EBEF; --muted: #93A5AF; --line: #2D3D47;
+  --bg: #0D1519; --dot: #22323B; --surface: #15212A; --ink: #E2EBEF; --muted: #93A5AF; --line: #2D3D47; --shadow: rgba(0,0,0,.35);
   --web: #4EC3B6; --web-soft: #12302E; --app: #EF9A62; --app-soft: #3A2417; --out: #8F9AA4; --out-soft: #1C2830; color-scheme: dark } }
 :root[data-theme="dark"] {
-  --bg: #0E161B; --surface: #15212A; --ink: #E2EBEF; --muted: #93A5AF; --line: #2D3D47;
+  --bg: #0D1519; --dot: #22323B; --surface: #15212A; --ink: #E2EBEF; --muted: #93A5AF; --line: #2D3D47; --shadow: rgba(0,0,0,.35);
   --web: #4EC3B6; --web-soft: #12302E; --app: #EF9A62; --app-soft: #3A2417; --out: #8F9AA4; --out-soft: #1C2830; color-scheme: dark }
 
-body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.45; }
-.wrap { max-width: 1240px; margin: 0 auto; padding-block: 28px 56px;
-  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+html, body { height: 100%; margin: 0; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.4; overflow: hidden; }
+.shell { height: 100%; display: flex; flex-direction: column; }
 
-.topnav { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
-.topnav a { font: 600 13px var(--f-body); color: var(--muted); text-decoration: none; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); }
+.bar { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; justify-content: space-between;
+  padding-block: 12px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-top: max(12px, env(safe-area-inset-top, 0px));
+  background: var(--surface); border-bottom: 1px solid var(--line); position: relative; z-index: 5; }
+.brand { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; min-width: 0; }
+.brand h1 { font-family: var(--f-display); font-weight: 800; font-size: 19px; margin: 0; letter-spacing: -.01em; }
+.eyebrow { font-family: var(--f-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.topnav { display: flex; gap: 6px; }
+.topnav a { font: 600 13px var(--f-body); color: var(--muted); text-decoration: none; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); }
 .topnav a[aria-current="page"] { color: var(--bg); background: var(--ink); border-color: var(--ink); }
-.topnav a:hover { color: var(--ink); }
-header { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: end; justify-content: space-between; margin-bottom: 22px; }
-.eyebrow { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
-h1 { font-family: var(--f-display); font-weight: 800; font-size: clamp(26px, 4vw, 38px); line-height: 1.05; margin: 4px 0 6px; text-wrap: balance; letter-spacing: -.01em; }
-.sub { color: var(--muted); max-width: 62ch; margin: 0; }
 .controls { display: flex; gap: 8px; flex-wrap: wrap; }
-button { font: 600 13px var(--f-body); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 7px 12px; cursor: pointer; }
+button { font: 600 13px var(--f-body); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 6px 11px; cursor: pointer; }
 button:hover { border-color: var(--muted); }
-button:focus-visible, summary:focus-visible { outline: 2px solid var(--web); outline-offset: 2px; }
+button:focus-visible, .mod:focus-visible, .topnav a:focus-visible { outline: 2px solid var(--web); outline-offset: 2px; }
 
-/* Raíz */
-.root { display: flex; flex-direction: column; align-items: center; }
-.root-box { background: var(--ink); color: var(--bg); border-radius: 10px; padding: 14px 22px; text-align: center; max-width: 560px; }
-.root-box b { font-family: var(--f-display); font-size: 22px; font-weight: 800; display: block; }
-.root-box span { font-size: 13.5px; opacity: .85; }
-.stem { width: 2px; height: 22px; background: var(--line); }
-.split { position: relative; height: 22px; width: 100%; }
-.split::before { content: ""; position: absolute; top: 0; left: 25%; right: 25%; border-top: 2px solid var(--line); }
-.split::after { content: ""; position: absolute; top: 0; left: 25%; right: 25%; height: 22px; border-left: 2px solid var(--line); border-right: 2px solid var(--line); }
+.vp { flex: 1; position: relative; overflow: hidden; touch-action: none; cursor: grab;
+  background-color: var(--bg); background-image: radial-gradient(var(--dot) 1.2px, transparent 1.4px); background-size: 24px 24px; }
+.vp.grabbing { cursor: grabbing; }
+#world { position: absolute; left: 0; top: 0; transform-origin: 0 0; user-select: none; -webkit-user-select: none; }
+#links { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+#links path { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+#links .root { stroke: var(--ink); opacity: .45; }
+#links .web { stroke: var(--web); opacity: .55; }
+#links .app { stroke: var(--app); opacity: .55; }
+#links .out { stroke: var(--out); opacity: .55; stroke-dasharray: 5 5; }
 
-.branches { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
-.branch { min-width: 0; }
-.branch-head { border-radius: 10px; padding: 12px 16px; border: 2px solid var(--c); background: var(--c-soft); }
-.branch-head .tag { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--c); }
-.branch-head h2 { font-family: var(--f-display); font-weight: 800; font-size: 21px; margin: 2px 0 4px; }
-.branch-head p { margin: 0; font-size: 14px; color: var(--muted); }
+.n { position: absolute; }
 .web { --c: var(--web); --c-soft: var(--web-soft); }
 .app { --c: var(--app); --c-soft: var(--app-soft); }
-
-/* Árbol vertical */
-.tree, .tree ul { list-style: none; margin: 0; padding: 0; }
-.tree { margin-left: 18px; padding-top: 4px; }
-.tree ul { margin-left: 16px; }
-.tree li { position: relative; padding: 6px 0 0 20px; }
-.tree li::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; border-left: 2px solid var(--line); }
-.tree li:last-child::before { bottom: auto; height: 23px; }
-.tree li::after { content: ""; position: absolute; left: 0; top: 23px; width: 14px; border-top: 2px solid var(--line); }
-
-details > summary { list-style: none; cursor: pointer; }
-details > summary::-webkit-details-marker { display: none; }
-.node { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 7px; padding: 8px 12px; }
-.lvl1 > .node, .lvl1 > summary.node { border-left: 4px solid var(--c); }
-.node .t { font-weight: 600; min-width: 0; flex: 1 1 auto; }
-.lvl1 > summary .t { font-family: var(--f-display); font-weight: 700; font-size: 15.5px; }
-.caret { width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid var(--muted); transition: transform .15s; flex: none; }
-details:not([open]) > summary .caret { transform: rotate(-90deg); }
-.ref { font-family: var(--f-mono); font-size: 11.5px; color: var(--muted); }
-.wk { font: 600 11.5px var(--f-mono); color: var(--c); background: var(--c-soft); border-radius: 999px; padding: 2px 8px; white-space: nowrap; }
-.leaf { background: transparent; border: 0; padding: 4px 0 0; font-size: 14.5px; }
-.leaf.note { color: var(--muted); font-style: italic; }
+.out { --c: var(--out); --c-soft: var(--out-soft); }
+.root { background: var(--ink); color: var(--bg); border-radius: 14px; padding: 16px 22px; text-align: center; box-shadow: 0 6px 20px var(--shadow); }
+.root b { display: block; font-family: var(--f-display); font-size: 26px; font-weight: 800; }
+.root span { font-size: 14px; opacity: .85; }
+.branch { border: 2px solid var(--c); background: var(--c-soft); border-radius: 14px; padding: 12px 16px; box-shadow: 0 4px 14px var(--shadow); }
+.branch.out { border-style: dashed; }
+.branch .tag { font-family: var(--f-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--c); }
+.branch h2 { font-family: var(--f-display); font-weight: 800; font-size: 22px; margin: 2px 0 3px; }
+.branch p { margin: 0; font-size: 13.5px; color: var(--muted); }
+.mod { background: var(--surface); border: 1px solid var(--line); border-top: 5px solid var(--c); border-radius: 10px; padding: 10px 12px; cursor: pointer; box-shadow: 0 2px 8px var(--shadow); }
+.mod.out { border-top-style: dashed; }
+.mod .mh { display: flex; gap: 8px; align-items: flex-start; }
+.mod .t { font-family: var(--f-display); font-weight: 700; font-size: 15.5px; line-height: 1.2; }
+.caret { margin-top: 5px; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid var(--muted); flex: none; transition: transform .15s; }
+.mod[aria-expanded="false"] .caret { transform: rotate(-90deg); }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; margin-top: 7px; }
+.ref { font-family: var(--f-mono); font-size: 11px; color: var(--muted); }
+.wk { font: 600 11px var(--f-mono); color: var(--c); background: var(--c-soft); border-radius: 999px; padding: 2px 8px; white-space: nowrap; }
 .count { font: 500 11px var(--f-mono); color: var(--muted); }
+.item { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; font-size: 13.5px; line-height: 1.35; }
+.item.group { background: var(--c-soft); border-color: transparent; font-weight: 600; }
+.item.group .ref { font-weight: 400; }
+.item.note { font-style: italic; color: var(--muted); background: transparent; border-style: dashed; }
+.item.out { color: var(--muted); }
 
-.out { margin-top: 34px; border: 1px dashed var(--out); background: var(--out-soft); border-radius: 10px; padding: 14px 16px; }
-.out h3 { font-family: var(--f-display); font-size: 16px; margin: 0 0 8px; }
-.out ul { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 6px; }
-.out li { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 3px 10px; font-size: 13.5px; color: var(--muted); }
-.legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 14px; font-size: 13px; color: var(--muted); }
-.legend span { display: inline-flex; gap: 6px; align-items: center; }
-
-@media (max-width: 860px) {
-  .branches { grid-template-columns: 1fr; gap: 26px; }
-  .split { display: none; }
-  .tree { margin-left: 8px; }
-  .tree ul { margin-left: 8px; }
-}
+.hud { position: absolute; right: max(14px, env(safe-area-inset-right, 0px)); bottom: max(14px, env(safe-area-inset-bottom, 0px)); display: flex; gap: 4px; align-items: center;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 4px; box-shadow: 0 4px 14px var(--shadow); z-index: 4; }
+.hud button { border: 0; min-width: 34px; height: 32px; padding: 0 9px; font-size: 16px; }
+.hud .pct { font: 500 12px var(--f-mono); color: var(--muted); min-width: 46px; text-align: center; font-variant-numeric: tabular-nums; }
+.hud .fit { font-size: 13px; }
+.hint { position: absolute; left: max(14px, env(safe-area-inset-left, 0px)); bottom: max(14px, env(safe-area-inset-bottom, 0px)); font-size: 12.5px; color: var(--muted);
+  background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; max-width: min(460px, calc(100% - 220px)); z-index: 4; }
+@media (max-width: 640px) { .hint { display: none; } .brand h1 { font-size: 17px; } }
 @media (prefers-reduced-motion: reduce) { .caret { transition: none; } }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <nav class="topnav" aria-label="Secciones"><a href="./" aria-current="page">Diagrama</a><a href="documentos/">Documento</a></nav>
-  <header>
-    <div>
-      <div class="eyebrow">Especificación funcional v1.0 · 4 nov 2026 · ProdiK</div>
-      <h1>QD Connect: mapa de requerimientos</h1>
+<div class="shell">
+  <div class="bar">
+    <div class="brand">
+      <div>
+        <div class="eyebrow">Especificación funcional v1.0 · ProdiK</div>
+        <h1>QD Connect: mapa de requerimientos</h1>
+      </div>
+      <nav class="topnav" aria-label="Secciones"><a href="./" aria-current="page">Diagrama</a><a href="documentos/">Documento</a></nav>
     </div>
     <div class="controls">
       <button type="button" id="expandAll">Expandir todo</button>
       <button type="button" id="collapseAll">Contraer todo</button>
     </div>
-  </header>
-
-  <div class="root">
-    <div class="root-box"><b>QD Connect</b><span>SaaS B2B multiempresa de quinielas corporativas sobre App QD + DeportiX API</span></div>
-    <div class="stem"></div>
-    <div class="split"></div>
   </div>
-
-  <div class="branches">
-    <section class="branch web" aria-labelledby="h-web">
-      <div class="branch-head">
-        <div class="tag">Cotización 1 · Sem 1–16</div>
-        <h2 id="h-web">Web</h2>
-        <p>Backend SaaS, portal de administración (ProdiK + RH), portal web de empleados y correos. Frontend nuevo en Next.js.</p>
-      </div>
-      <ul class="tree" id="tree-web"></ul>
-    </section>
-
-    <section class="branch app" aria-labelledby="h-app">
-      <div class="branch-head">
-        <div class="tag">Cotización 2 · incremental · Sem 17–24</div>
-        <h2 id="h-app">App iOS + Android</h2>
-        <p>Todo lo de la Web más una app única QD Connect para empleados de todas las empresas.</p>
-      </div>
-      <ul class="tree" id="tree-app"></ul>
-    </section>
+  <div class="vp" id="vp" aria-label="Lienzo del diagrama">
+    <div id="world"><svg id="links" aria-hidden="true"></svg></div>
+    <div class="hint">Arrastra para moverte · Ctrl + rueda o pellizca para acercar · Clic en un módulo para abrirlo o cerrarlo</div>
+    <div class="hud">
+      <button type="button" id="zoomOut" aria-label="Alejar">−</button>
+      <span class="pct" id="pct">100%</span>
+      <button type="button" id="zoomIn" aria-label="Acercar">+</button>
+      <button type="button" class="fit" id="fitBtn">Ajustar</button>
+    </div>
   </div>
-
-  <div class="out">
-    <h3>Fuera de alcance en ambas (§1.3, §15.4)</h3>
-    <ul>
-      <li>Pagos en línea, carrito y Créditos QD</li><li>Entrega o seguimiento de premios</li><li>Login compartido con App QD</li>
-      <li>Promover App QD a empleados</li><li>Nómina, ERP, SSO e integraciones RH</li><li>Partidos o resultados capturados a mano</li>
-      <li>Reglas deportivas nuevas o ponderaciones</li><li>Autoregistro de empleados</li><li>Varias participaciones por torneo</li>
-      <li>Grupos creados por empleados</li><li>Temporadas simultáneas activas</li><li>Subdominios cambiables</li><li>MFA</li>
-      <li>Sitio comercial y enlace desde App QD</li>
-    </ul>
-  </div>
-  <div class="legend"><span><i class="wk" style="--c:var(--web);--c-soft:var(--web-soft)">Sem</i> semanas del plan</span><span class="ref">§ = sección del documento</span></div>
 </div>
-
 <script>
-// [titulo, ref, semanas, hijos]; un string es una hoja; "~texto" es una nota de supuesto.
 const WEB = [
   ["Plataforma y seguridad", "§2 · §14", "Sem 1–2", [
     "Proyecto Firebase propio (staging y producción), separado de App QD",
@@ -310,42 +277,168 @@ const APP = [
     "Push según las notificaciones existentes"]]
 ];
 
-function countLeaves(kids) { return kids.reduce((n, k) => n + (Array.isArray(k) ? countLeaves(k[3]) : 1), 0); }
-function build(items, ul, level) {
-  for (const it of items) {
-    const li = document.createElement("li");
-    if (typeof it === "string") {
-      const d = document.createElement("div");
-      d.className = "node leaf" + (it.startsWith("~") ? " note" : "");
-      d.textContent = it.replace(/^~/, "");
-      li.appendChild(d);
-    } else {
-      const [title, ref, wk, kids] = it;
-      const det = document.createElement("details");
-      det.open = true;
-      if (level === 1) det.className = "lvl1";
-      const s = document.createElement("summary");
-      s.className = "node";
-      s.innerHTML = '<i class="caret" aria-hidden="true"></i><span class="t"></span>' +
-        (ref ? '<span class="ref"></span>' : "") + (wk ? '<span class="wk"></span>' : "") +
-        '<span class="count"></span>';
-      s.querySelector(".t").textContent = title;
-      if (ref) s.querySelector(".ref").textContent = ref;
-      if (wk) s.querySelector(".wk").textContent = wk;
-      s.querySelector(".count").textContent = countLeaves(kids);
-      det.appendChild(s);
-      const sub = document.createElement("ul");
-      build(kids, sub, level + 1);
-      det.appendChild(sub);
-      li.appendChild(det);
+const OUT = ["Pagos en línea, carrito y Créditos QD", "Entrega o seguimiento de premios", "Login compartido con App QD", "Promover App QD a empleados", "Nómina, ERP, SSO e integraciones RH", "Partidos o resultados capturados a mano", "Reglas deportivas nuevas o ponderaciones", "Autoregistro de empleados", "Varias participaciones por torneo", "Grupos creados por empleados", "Temporadas simultáneas activas", "Subdominios cambiables", "MFA", "Sitio comercial y enlace desde App QD"];
+const BRANCHES = [
+  { key: "web", tag: "Cotización 1 · Sem 1–16", title: "Web", desc: "Frontend nuevo en Next.js: administración (ProdiK + RH) y portal de empleados", mods: WEB },
+  { key: "app", tag: "Cotización 2 · incremental · Sem 17–24", title: "App iOS + Android", desc: "App única QD Connect en Flutter sobre el mismo backend", mods: APP },
+  { key: "out", tag: "§1.3 · §15.4", title: "Fuera de alcance", desc: "No incluido en ninguna cotización", mods: [["No incluido", "§1.3 · §15.4", "", OUT]] }
+];
+
+const COLW = 262, CGAP = 30, BGAP = 110, IND = 22, IGAP = 8, LEVEL = 70;
+const world = document.getElementById("world"), svg = document.getElementById("links"), vp = document.getElementById("vp");
+const esc = s => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const countLeaves = k => k.reduce((n, x) => n + (Array.isArray(x) ? countLeaves(x[3]) : 1), 0);
+function mk(cls, html) { const d = document.createElement("div"); d.className = "n " + cls; d.innerHTML = html; world.appendChild(d); return d; }
+function pos(el, x, y) { el.style.left = x + "px"; el.style.top = y + "px"; }
+
+let dragged = false;
+const root = { el: mk("root", "<b>QD Connect</b><span>SaaS B2B multiempresa de quinielas corporativas sobre App QD + DeportiX API</span>") };
+function makeItems(kids, key) {
+  return kids.map(k => {
+    if (typeof k === "string") {
+      const note = k.startsWith("~");
+      return { el: mk("item " + key + (note ? " note" : ""), esc(k.replace(/^~/, ""))), kids: [] };
     }
-    ul.appendChild(li);
-  }
+    const [t, ref, , kk] = k;
+    return { el: mk("item group " + key, '<span class="t">' + esc(t) + "</span>" + (ref ? ' <span class="ref">' + esc(ref) + "</span>" : "")), kids: makeItems(kk, key) };
+  });
 }
-build(WEB, document.getElementById("tree-web"), 1);
-build(APP, document.getElementById("tree-app"), 1);
-document.getElementById("expandAll").addEventListener("click", () => document.querySelectorAll("details").forEach(d => d.open = true));
-document.getElementById("collapseAll").addEventListener("click", () => document.querySelectorAll("details").forEach(d => d.open = false));
+const mods = [];
+const branches = BRANCHES.map(b => {
+  const br = { b, el: mk("branch " + b.key, '<div class="tag">' + esc(b.tag) + "</div><h2>" + esc(b.title) + "</h2><p>" + esc(b.desc) + "</p>") };
+  br.mods = b.mods.map(([t, ref, wk, kids]) => {
+    const m = { collapsed: false };
+    m.el = mk("mod " + b.key, '<div class="mh"><i class="caret" aria-hidden="true"></i><span class="t">' + esc(t) + '</span></div><div class="meta">' +
+      (ref ? '<span class="ref">' + esc(ref) + "</span>" : "") + (wk ? '<span class="wk">' + esc(wk) + "</span>" : "") +
+      '<span class="count">' + countLeaves(kids) + " puntos</span></div>");
+    m.el.tabIndex = 0; m.el.setAttribute("role", "button"); m.el.setAttribute("aria-expanded", "true");
+    m.kids = makeItems(kids, b.key);
+    const toggle = () => { m.collapsed = !m.collapsed; layout(); };
+    m.el.addEventListener("click", () => { if (!dragged) toggle(); });
+    m.el.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } });
+    mods.push(m);
+    return m;
+  });
+  return br;
+});
+
+let bounds = { w: 0, h: 0 };
+function setVis(items, vis) { items.forEach(i => { i.el.hidden = !vis; setVis(i.kids, vis); }); }
+function elbow(x1, y1, x2, y2, cls) { const my = Math.round((y1 + y2) / 2); return '<path class="' + cls + '" d="M' + x1 + " " + y1 + "V" + my + "H" + x2 + "V" + y2 + '"/>'; }
+function placeItems(items, colX, y, depth, parentBottom, key, links) {
+  const ix = colX + IND * (depth + 1), w = COLW - IND * (depth + 1), spine = colX + IND * depth + IND / 2;
+  let lastMid = parentBottom;
+  for (const it of items) {
+    it.el.style.width = w + "px"; pos(it.el, ix, y);
+    const h = it.el.offsetHeight, mid = y + Math.min(h / 2, 17);
+    links.push('<path class="' + key + '" d="M' + spine + " " + mid + "H" + ix + '"/>');
+    lastMid = mid; y += h + IGAP;
+    if (it.kids.length) y = placeItems(it.kids, colX, y, depth + 1, y - IGAP, key, links);
+  }
+  links.push('<path class="' + key + '" d="M' + spine + " " + parentBottom + "V" + lastMid + '"/>');
+  return y;
+}
+function layout() {
+  const links = [];
+  root.el.style.width = "380px";
+  branches.forEach(br => { br.el.style.width = "320px"; });
+  const rootH = root.el.offsetHeight, brY = rootH + LEVEL;
+  const brH = Math.max(...branches.map(b => b.el.offsetHeight)), modY = brY + brH + LEVEL;
+  let x = 0, maxY = modY;
+  branches.forEach(br => {
+    const sx = x;
+    br.mods.forEach(m => {
+      m.el.style.width = COLW + "px"; pos(m.el, x, modY);
+      m.el.setAttribute("aria-expanded", String(!m.collapsed));
+      const mh = m.el.offsetHeight;
+      setVis(m.kids, !m.collapsed);
+      maxY = Math.max(maxY, m.collapsed ? modY + mh : placeItems(m.kids, x, modY + mh + 16, 0, modY + mh, br.b.key, links));
+      links.push(null); m.cx = x + COLW / 2; x += COLW + CGAP;
+    });
+    const ex = x - CGAP;
+    br.cx = Math.round((sx + ex) / 2); br.w = br.el.offsetWidth;
+    pos(br.el, br.cx - br.w / 2, brY);
+    br.mods.forEach(m => links.push(elbow(br.cx, brY + br.el.offsetHeight, m.cx, modY, br.b.key)));
+    x = ex + BGAP;
+  });
+  const W = x - BGAP, H = maxY + 60;
+  const rc = Math.round((branches[0].cx + branches[1].cx) / 2);
+  root.cx = rc; pos(root.el, rc - root.el.offsetWidth / 2, 0);
+  branches.forEach(br => links.push(elbow(rc, rootH, br.cx, brY, br.b.key === "out" ? "out" : "root")));
+  svg.setAttribute("width", W); svg.setAttribute("height", H);
+  svg.innerHTML = links.filter(Boolean).join("");
+  world.style.width = W + "px"; world.style.height = H + "px";
+  bounds = { w: W, h: H };
+}
+
+let s = 1, tx = 0, ty = 0;
+const pct = document.getElementById("pct");
+function apply() {
+  world.style.transform = "translate(" + tx + "px," + ty + "px) scale(" + s + ")";
+  vp.style.backgroundSize = 24 * s + "px " + 24 * s + "px";
+  vp.style.backgroundPosition = tx + "px " + ty + "px";
+  pct.textContent = Math.round(s * 100) + "%";
+}
+function zoomAt(f, cx, cy) { const ns = Math.min(2, Math.max(0.12, s * f)), k = ns / s; tx = cx - (cx - tx) * k; ty = cy - (cy - ty) * k; s = ns; apply(); }
+function fit() {
+  const r = vp.getBoundingClientRect();
+  s = Math.max(0.12, Math.min(1, (r.width - 48) / bounds.w, (r.height - 48) / bounds.h));
+  tx = (r.width - bounds.w * s) / 2; ty = 24; apply();
+}
+function home() {
+  const r = vp.getBoundingClientRect();
+  s = Math.max(0.45, Math.min(1, (r.width - 48) / bounds.w));
+  tx = bounds.w * s <= r.width ? (r.width - bounds.w * s) / 2 : 24; ty = 24;
+  apply();
+}
+
+const ptrs = new Map(); let start = null, pinch = null;
+const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+vp.addEventListener("pointerdown", e => {
+  if (e.target.closest(".hud, .hint")) return;
+  if (e.pointerType === "mouse" && e.button !== 0) return;
+  ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (ptrs.size === 1) { dragged = false; start = { x: e.clientX, y: e.clientY, tx, ty }; }
+  else if (ptrs.size === 2) { const [a, b] = [...ptrs.values()]; pinch = { d: dist(a, b), s }; dragged = true; }
+  vp.classList.add("grabbing");
+});
+window.addEventListener("pointermove", e => {
+  if (!ptrs.has(e.pointerId)) return;
+  ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (ptrs.size === 1 && start) {
+    const dx = e.clientX - start.x, dy = e.clientY - start.y;
+    if (Math.abs(dx) + Math.abs(dy) > 4) dragged = true;
+    if (dragged) { tx = start.tx + dx; ty = start.ty + dy; apply(); }
+  } else if (ptrs.size === 2 && pinch) {
+    const [a, b] = [...ptrs.values()], r = vp.getBoundingClientRect();
+    zoomAt((dist(a, b) / pinch.d) * pinch.s / s, (a.x + b.x) / 2 - r.left, (a.y + b.y) / 2 - r.top);
+  }
+});
+function up(e) {
+  if (!ptrs.has(e.pointerId)) return;
+  ptrs.delete(e.pointerId);
+  if (ptrs.size < 2) pinch = null;
+  if (ptrs.size === 1) { const p = [...ptrs.values()][0]; start = { x: p.x, y: p.y, tx, ty }; }
+  if (ptrs.size === 0) { start = null; vp.classList.remove("grabbing"); setTimeout(() => { dragged = false; }, 0); }
+}
+window.addEventListener("pointerup", up); window.addEventListener("pointercancel", up);
+vp.addEventListener("wheel", e => {
+  e.preventDefault();
+  const r = vp.getBoundingClientRect();
+  if (e.ctrlKey || e.metaKey) zoomAt(Math.exp(-e.deltaY * 0.01), e.clientX - r.left, e.clientY - r.top);
+  else { tx -= e.deltaX; ty -= e.deltaY; apply(); }
+}, { passive: false });
+
+const center = () => { const r = vp.getBoundingClientRect(); return [r.width / 2, r.height / 2]; };
+document.getElementById("zoomIn").addEventListener("click", () => zoomAt(1.25, ...center()));
+document.getElementById("zoomOut").addEventListener("click", () => zoomAt(0.8, ...center()));
+document.getElementById("fitBtn").addEventListener("click", fit);
+document.getElementById("expandAll").addEventListener("click", () => { mods.forEach(m => m.collapsed = false); layout(); });
+document.getElementById("collapseAll").addEventListener("click", () => { mods.forEach(m => m.collapsed = true); layout(); fit(); });
+
+layout(); home();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { layout(); home(); });
+window.addEventListener("resize", () => apply());
 </script>
 </body>
 </html>
