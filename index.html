@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<style>*,*::before,*::after{box-sizing:border-box}body{margin:0}[hidden]{display:none!important}</style>
+<title>QD Connect · Requerimientos</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: raíz arriba, se divide en dos ramas (Web | App) que bajan como árboles verticales; abajo, lo que queda fuera de alcance. */
+:root {
+  --bg: #F4F7F8; --surface: #FFFFFF; --ink: #13222C; --muted: #586974; --line: #C3CFD6;
+  --web: #0C7A72; --web-soft: #E0F1EF; --app: #B1501C; --app-soft: #F8E9DD; --out: #7C8791; --out-soft: #ECEFF1;
+  --f-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0E161B; --surface: #15212A; --ink: #E2EBEF; --muted: #93A5AF; --line: #2D3D47;
+  --web: #4EC3B6; --web-soft: #12302E; --app: #EF9A62; --app-soft: #3A2417; --out: #8F9AA4; --out-soft: #1C2830; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0E161B; --surface: #15212A; --ink: #E2EBEF; --muted: #93A5AF; --line: #2D3D47;
+  --web: #4EC3B6; --web-soft: #12302E; --app: #EF9A62; --app-soft: #3A2417; --out: #8F9AA4; --out-soft: #1C2830; color-scheme: dark }
+
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.45; }
+.wrap { max-width: 1240px; margin: 0 auto; padding-block: 28px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+header { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: end; justify-content: space-between; margin-bottom: 22px; }
+.eyebrow { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+h1 { font-family: var(--f-display); font-weight: 800; font-size: clamp(26px, 4vw, 38px); line-height: 1.05; margin: 4px 0 6px; text-wrap: balance; letter-spacing: -.01em; }
+.sub { color: var(--muted); max-width: 62ch; margin: 0; }
+.controls { display: flex; gap: 8px; flex-wrap: wrap; }
+button { font: 600 13px var(--f-body); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 7px 12px; cursor: pointer; }
+button:hover { border-color: var(--muted); }
+button:focus-visible, summary:focus-visible { outline: 2px solid var(--web); outline-offset: 2px; }
+
+/* Raíz */
+.root { display: flex; flex-direction: column; align-items: center; }
+.root-box { background: var(--ink); color: var(--bg); border-radius: 10px; padding: 14px 22px; text-align: center; max-width: 560px; }
+.root-box b { font-family: var(--f-display); font-size: 22px; font-weight: 800; display: block; }
+.root-box span { font-size: 13.5px; opacity: .85; }
+.stem { width: 2px; height: 22px; background: var(--line); }
+.split { position: relative; height: 22px; width: 100%; }
+.split::before { content: ""; position: absolute; top: 0; left: 25%; right: 25%; border-top: 2px solid var(--line); }
+.split::after { content: ""; position: absolute; top: 0; left: 25%; right: 25%; height: 22px; border-left: 2px solid var(--line); border-right: 2px solid var(--line); }
+
+.branches { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+.branch { min-width: 0; }
+.branch-head { border-radius: 10px; padding: 12px 16px; border: 2px solid var(--c); background: var(--c-soft); }
+.branch-head .tag { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--c); }
+.branch-head h2 { font-family: var(--f-display); font-weight: 800; font-size: 21px; margin: 2px 0 4px; }
+.branch-head p { margin: 0; font-size: 14px; color: var(--muted); }
+.web { --c: var(--web); --c-soft: var(--web-soft); }
+.app { --c: var(--app); --c-soft: var(--app-soft); }
+
+/* Árbol vertical */
+.tree, .tree ul { list-style: none; margin: 0; padding: 0; }
+.tree { margin-left: 18px; padding-top: 4px; }
+.tree ul { margin-left: 16px; }
+.tree li { position: relative; padding: 6px 0 0 20px; }
+.tree li::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; border-left: 2px solid var(--line); }
+.tree li:last-child::before { bottom: auto; height: 23px; }
+.tree li::after { content: ""; position: absolute; left: 0; top: 23px; width: 14px; border-top: 2px solid var(--line); }
+
+details > summary { list-style: none; cursor: pointer; }
+details > summary::-webkit-details-marker { display: none; }
+.node { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 7px; padding: 8px 12px; }
+.lvl1 > .node, .lvl1 > summary.node { border-left: 4px solid var(--c); }
+.node .t { font-weight: 600; min-width: 0; flex: 1 1 auto; }
+.lvl1 > summary .t { font-family: var(--f-display); font-weight: 700; font-size: 15.5px; }
+.caret { width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid var(--muted); transition: transform .15s; flex: none; }
+details:not([open]) > summary .caret { transform: rotate(-90deg); }
+.ref { font-family: var(--f-mono); font-size: 11.5px; color: var(--muted); }
+.wk { font: 600 11.5px var(--f-mono); color: var(--c); background: var(--c-soft); border-radius: 999px; padding: 2px 8px; white-space: nowrap; }
+.leaf { background: transparent; border: 0; padding: 4px 0 0; font-size: 14.5px; }
+.leaf.note { color: var(--muted); font-style: italic; }
+.count { font: 500 11px var(--f-mono); color: var(--muted); }
+
+.out { margin-top: 34px; border: 1px dashed var(--out); background: var(--out-soft); border-radius: 10px; padding: 14px 16px; }
+.out h3 { font-family: var(--f-display); font-size: 16px; margin: 0 0 8px; }
+.out ul { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 6px; }
+.out li { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 3px 10px; font-size: 13.5px; color: var(--muted); }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 14px; font-size: 13px; color: var(--muted); }
+.legend span { display: inline-flex; gap: 6px; align-items: center; }
+
+@media (max-width: 860px) {
+  .branches { grid-template-columns: 1fr; gap: 26px; }
+  .split { display: none; }
+  .tree { margin-left: 8px; }
+  .tree ul { margin-left: 8px; }
+}
+@media (prefers-reduced-motion: reduce) { .caret { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">Especificación funcional v1.0 · 4 nov 2026 · ProdiK</div>
+      <h1>QD Connect: mapa de requerimientos</h1>
+      <p class="sub">Todo lo que pide el documento, dividido en las dos cotizaciones. La app no repite el backend: hereda todo lo de la web y solo suma lo móvil. Plan de 24 semanas: web en Next.js (sem 1–16) y después app en Flutter (sem 17–24).</p>
+    </div>
+    <div class="controls">
+      <button type="button" id="expandAll">Expandir todo</button>
+      <button type="button" id="collapseAll">Contraer todo</button>
+    </div>
+  </header>
+
+  <div class="root">
+    <div class="root-box"><b>QD Connect</b><span>SaaS B2B multiempresa de quinielas corporativas sobre App QD + DeportiX API</span></div>
+    <div class="stem"></div>
+    <div class="split"></div>
+  </div>
+
+  <div class="branches">
+    <section class="branch web" aria-labelledby="h-web">
+      <div class="branch-head">
+        <div class="tag">Cotización 1 · Sem 1–16</div>
+        <h2 id="h-web">Web</h2>
+        <p>Backend SaaS, portal de administración (ProdiK + RH), portal web de empleados y correos. Frontend nuevo en Next.js.</p>
+      </div>
+      <ul class="tree" id="tree-web"></ul>
+    </section>
+
+    <section class="branch app" aria-labelledby="h-app">
+      <div class="branch-head">
+        <div class="tag">Cotización 2 · incremental · Sem 17–24</div>
+        <h2 id="h-app">App iOS + Android</h2>
+        <p>Todo lo de la Web más una app única QD Connect para empleados de todas las empresas.</p>
+      </div>
+      <ul class="tree" id="tree-app"></ul>
+    </section>
+  </div>
+
+  <div class="out">
+    <h3>Fuera de alcance en ambas (§1.3, §15.4)</h3>
+    <ul>
+      <li>Pagos en línea, carrito y Créditos QD</li><li>Entrega o seguimiento de premios</li><li>Login compartido con App QD</li>
+      <li>Promover App QD a empleados</li><li>Nómina, ERP, SSO e integraciones RH</li><li>Partidos o resultados capturados a mano</li>
+      <li>Reglas deportivas nuevas o ponderaciones</li><li>Autoregistro de empleados</li><li>Varias participaciones por torneo</li>
+      <li>Grupos creados por empleados</li><li>Temporadas simultáneas activas</li><li>Subdominios cambiables</li><li>MFA</li>
+      <li>Sitio comercial y enlace desde App QD</li>
+    </ul>
+  </div>
+  <div class="legend"><span><i class="wk" style="--c:var(--web);--c-soft:var(--web-soft)">Sem</i> semanas del plan</span><span class="ref">§ = sección del documento</span></div>
+</div>
+
+<script>
+// [titulo, ref, semanas, hijos]; un string es una hoja; "~texto" es una nota de supuesto.
+const WEB = [
+  ["Plataforma y seguridad", "§2 · §14", "Sem 1–2", [
+    "Proyecto Firebase propio (staging y producción), separado de App QD",
+    ["Multiempresa", "§2.1", "", [
+      "Aislamiento validado en backend en cada consulta y operación",
+      "Un tenant de acceso por empresa",
+      "Mismo correo con cuentas separadas en empresas distintas",
+      "Reglas de seguridad con pruebas automáticas"]],
+    "Subdominio por empresa (DNS comodín)",
+    "Contraseñas protegidas, enlaces seguros, control de sesiones, HTTPS",
+    "Bitácora de cambios sensibles: empleados, cupos, publicaciones, mensajes, premios",
+    "Respaldos, monitoreo, despliegues y recuperación"]],
+  ["Administración central ProdiK", "§4", "Sem 3–4", [
+    ["Alta de empresa", "§4.1", "", [
+      "Datos administrativos básicos",
+      "Subdominio asignado a mano: único, permanente e inmodificable",
+      "Código de empresa autogenerado, permanente (lo usa la app)",
+      "Primer administrador de la empresa"]],
+    ["Licencias y contratación", "§4.3 · §12", "", [
+      "Cupos = empleados habilitados al mismo tiempo",
+      "Habilitar temporada tras pago verificado por fuera",
+      "Ampliaciones al precio completo, misma fecha de fin",
+      "Contratar solo antes del inicio de la temporada global"]],
+    ["Catálogo y temporadas globales", "§4.2", "", [
+      "Crear temporadas con fechas contractuales comunes",
+      "Elegir desde DeportiX: liga/torneo → fase → partido",
+      "Sin intervención del desarrollador para cada temporada nueva"]],
+    "No puede alterar pronósticos ni resultados"]],
+  ["Administración de la empresa (RH)", "§3 · §5 · §6", "Sem 5–6", [
+    ["Administradores", "§3", "", [
+      "Alta, edición y desactivación de otros admins",
+      "Nunca dejar a la empresa sin admin activo",
+      "Admin que juega consume una sola licencia"]],
+    ["Empleados por Excel", "§6.2 · §6.3", "", [
+      ["Tres operaciones", "", "", [
+        "Carga inicial",
+        "Actualización parcial: vacíos conservan el valor anterior",
+        "Renovación completa por temporada: continúan, altas y exclusiones"]],
+      "Campos: número, nombre, correo, departamento, sucursal, equipo (opcional)",
+      "Vista previa con conteos y confirmación explícita",
+      "Importar válidos y descargar Excel de rechazados con motivo",
+      "Rechazo total si se exceden las licencias",
+      "Fila con error pero identificable conserva sus datos en renovación"]],
+    ["Ficha del empleado", "§6.4 · §6.5", "", [
+      "Edición individual; quitar equipo solo desde la ficha",
+      "Baja con confirmación: revoca acceso y libera cupo",
+      "Cambio de correo con verificación en la nueva dirección",
+      "Reenvío de invitación individual o masivo"]],
+    ["Temporada de la empresa", "§5.1 · §5.3", "", [
+      "Preparar la siguiente mientras sigue la actual",
+      "Plantilla de la nueva temporada no toca la vigente",
+      "Publicar a mano: desde la fecha de inicio y sin otra activa",
+      "Publicar sin empleados ni eventos está permitido",
+      "No se puede despublicar",
+      "Fin automático por fecha; queda historial de solo lectura"]],
+    ["Selección de eventos", "§5.2", "", [
+      "Liga/torneo → fase completa o partidos sueltos",
+      "Cada liga = una competencia con un ranking",
+      "Agregar eventos futuros con la temporada publicada"]],
+    "Marca: logo, colores, nombre de temporada, bienvenida",
+    "Configuración de premios y criterio colectivo",
+    "Comunicado general a todos los empleados"]],
+  ["Motor deportivo", "§7.1 · §7.4", "Sem 7–11", [
+    "Inscripción automática a todos los torneos de la temporada",
+    "Una participación por empleado y torneo, sin compras ni créditos",
+    "Cierre de pronósticos validado en servidor",
+    "Pronósticos ajenos ocultos hasta el cierre, también para admins",
+    ["Reglas, puntos y desempates iguales a App QD", "", "", [
+      "Fútbol", "NFL (semanal y postemporada)", "Tenis (cuadro)", "Fórmula 1",
+      "~Supuesto de cotización: NFL Survivor y Playoffs por equipos fuera de v1"]],
+    "Resultados desde DeportiX API; sin datos deportivos capturados a mano",
+    "Al vencer la temporada se completan resultados ya disputados"]],
+  ["Clasificaciones y premios", "§7.2–7.5 · §8", "Sem 12", [
+    ["Rankings", "§7.2", "", [
+      "Individual por torneo", "Individual general de la temporada",
+      "Colectivo por departamento", "Colectivo por sucursal", "Colectivo por equipo"]],
+    ["Criterio colectivo (uno por empresa)", "§7.3", "", [
+      "A: puntos del mejor integrante",
+      "B: promedio de habilitados, con ceros en el denominador"]],
+    "Bajas fuera de los rankings activos",
+    "Visibles solo dentro de la empresa, sin correos ni número de empleado",
+    ["Premios opcionales", "§8", "", [
+      "Individuales y colectivos, por torneo y por temporada",
+      "Colectivo al grupo o a cada integrante elegible",
+      "Elegible = registró al menos un pronóstico",
+      "Visibles desde el inicio; bloqueados al iniciar la competencia",
+      "Solo se informan; la empresa los entrega por fuera"]]]],
+  ["Portal web de empleados", "§10", "Sem 7–12", [
+    "Acceso solo desde el subdominio de su empresa",
+    "Responsive para escritorio y celular",
+    "Activación por invitación, login, recuperación; sin registro",
+    "Inicio con logo, colores, temporada y bienvenida",
+    "Torneos, próximos partidos, pronósticos, progreso y puntos",
+    "Rankings individuales y colectivos, premios y ganadores",
+    "Historial de solo lectura al terminar o si no está en la nueva temporada",
+    "No edita perfil ni crea equipos; sin promoción de App QD"]],
+  ["Correos", "§6.4 · §9", "Sem 13–14", [
+    "Invitación y activación de cuenta",
+    "Recuperación de contraseña y verificación de cambio de correo",
+    "Comunicado de RH",
+    "Nuevo torneo o evento disponible",
+    "Recordatorio de pronóstico pendiente por partido (como App QD)",
+    "Resultados y ganadores publicados",
+    "Sin duplicados en reintentos; sin enviar a destinatarios inexistentes"]],
+  ["Dashboard y reportes RH", "§11", "Sem 14", [
+    "Adopción: habilitados, invitados, activados, participantes",
+    "Actividad por torneo, pronósticos y evolución",
+    "Comparativos por departamento, sucursal y equipo",
+    "Continuidad durante la temporada y contra anteriores",
+    "Ganadores y premios anunciados",
+    "Vista ejecutiva y exportación"]],
+  ["Entrega", "§15.3 · §16", "Sem 15–16", [
+    "13 casos de aceptación del §16",
+    "UAT con ProdiK y correcciones",
+    "Puesta en producción y empresa piloto",
+    "Capacitación y garantía"]]
+];
+
+const APP = [
+  ["Hereda de la Web (no se duplica)", "§15.2", "", [
+    "Backend, temporadas y datos deportivos",
+    "Reglas, cierres, puntos y desempates",
+    "Administración ProdiK y RH"]],
+  ["App única QD Connect", "§1.2", "Sem 17", [
+    "Una sola app para todas las empresas",
+    "iOS y Android en Flutter, clonada de App QD y adaptada",
+    "La web es un frontend nuevo; la app consume el mismo backend",
+    "Separada de la App QD pública"]],
+  ["Acceso", "§1.2 · §16", "Sem 17", [
+    "Primer acceso: código de empresa (fijo)",
+    "Después: correo y contraseña de QD Connect",
+    "Enlaces de activación y recuperación abren la app",
+    "Opción para cambiar de empresa"]],
+  ["Paridad con el portal web", "§1.2", "Sem 18–21", [
+    "Registro de pronósticos", "Resultados y progreso", "Rankings individuales y colectivos",
+    "Premios y ganadores", "Historial de solo lectura"]],
+  ["Notificaciones push", "§9", "Sem 21", [
+    "Comunicado de RH", "Nuevo torneo o evento", "Recordatorio por partido",
+    "Resultados y ganadores", "Bandeja de notificaciones con contador",
+    "Mismos disparadores que el correo, sin configuración por empresa"]],
+  ["Requisitos de tiendas", "§14", "Sem 22", [
+    "Cuentas de organización a nombre de ProdiK (D-U-N-S)",
+    "Solicitud de eliminación de cuenta en la app y en la web",
+    "Reglas oficiales en la app; Apple y Google no patrocinan",
+    "Empresa DEMO con datos para la revisión de Apple",
+    "Fichas, etiquetas de privacidad y Data safety"]],
+  ["Publicación", "§15.3", "Sem 23–24", [
+    "QA en dispositivos iOS y Android",
+    "TestFlight y prueba interna de Google Play",
+    "Revisión de Apple y Google, ajustes por rechazo",
+    "Publicación y mantenimiento en tiendas"]],
+  ["Caso de aceptación móvil", "§16", "Sem 24", [
+    "Login por código fijo de empresa",
+    "Mismas reglas y datos que QD Connect web",
+    "Push según las notificaciones existentes"]]
+];
+
+function countLeaves(kids) { return kids.reduce((n, k) => n + (Array.isArray(k) ? countLeaves(k[3]) : 1), 0); }
+function build(items, ul, level) {
+  for (const it of items) {
+    const li = document.createElement("li");
+    if (typeof it === "string") {
+      const d = document.createElement("div");
+      d.className = "node leaf" + (it.startsWith("~") ? " note" : "");
+      d.textContent = it.replace(/^~/, "");
+      li.appendChild(d);
+    } else {
+      const [title, ref, wk, kids] = it;
+      const det = document.createElement("details");
+      det.open = true;
+      if (level === 1) det.className = "lvl1";
+      const s = document.createElement("summary");
+      s.className = "node";
+      s.innerHTML = '<i class="caret" aria-hidden="true"></i><span class="t"></span>' +
+        (ref ? '<span class="ref"></span>' : "") + (wk ? '<span class="wk"></span>' : "") +
+        '<span class="count"></span>';
+      s.querySelector(".t").textContent = title;
+      if (ref) s.querySelector(".ref").textContent = ref;
+      if (wk) s.querySelector(".wk").textContent = wk;
+      s.querySelector(".count").textContent = countLeaves(kids);
+      det.appendChild(s);
+      const sub = document.createElement("ul");
+      build(kids, sub, level + 1);
+      det.appendChild(sub);
+      li.appendChild(det);
+    }
+    ul.appendChild(li);
+  }
+}
+build(WEB, document.getElementById("tree-web"), 1);
+build(APP, document.getElementById("tree-app"), 1);
+document.getElementById("expandAll").addEventListener("click", () => document.querySelectorAll("details").forEach(d => d.open = true));
+document.getElementById("collapseAll").addEventListener("click", () => document.querySelectorAll("details").forEach(d => d.open = false));
+</script>
+</body>
+</html>
