@@ -27,6 +27,10 @@ body { background: var(--bg); color: var(--ink); font-family: var(--f-body); fon
 .wrap { max-width: 1240px; margin: 0 auto; padding-block: 28px 56px;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 
+.topnav { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
+.topnav a { font: 600 13px var(--f-body); color: var(--muted); text-decoration: none; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); }
+.topnav a[aria-current="page"] { color: var(--bg); background: var(--ink); border-color: var(--ink); }
+.topnav a:hover { color: var(--ink); }
 header { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: end; justify-content: space-between; margin-bottom: 22px; }
 .eyebrow { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 h1 { font-family: var(--f-display); font-weight: 800; font-size: clamp(26px, 4vw, 38px); line-height: 1.05; margin: 4px 0 6px; text-wrap: balance; letter-spacing: -.01em; }
@@ -96,11 +100,11 @@ details:not([open]) > summary .caret { transform: rotate(-90deg); }
 </head>
 <body>
 <div class="wrap">
+  <nav class="topnav" aria-label="Secciones"><a href="./" aria-current="page">Diagrama</a><a href="documentos/">Documento</a></nav>
   <header>
     <div>
       <div class="eyebrow">Especificación funcional v1.0 · 4 nov 2026 · ProdiK</div>
       <h1>QD Connect: mapa de requerimientos</h1>
-      <p class="sub">Todo lo que pide el documento, dividido en las dos cotizaciones. La app no repite el backend: hereda todo lo de la web y solo suma lo móvil. Plan de 24 semanas: web en Next.js (sem 1–16) y después app en Flutter (sem 17–24).</p>
     </div>
     <div class="controls">
       <button type="button" id="expandAll">Expandir todo</button>
